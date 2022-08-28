@@ -19,6 +19,13 @@ Within this repository, I am practicing my skills as well building the tools / s
 ## Features
 
 - Computing of holding worth in USDT
+- Chart display for XRP/USDT ticker
+
+---
+
+## Roadmap
+
+- Buy / Sell zones indicators
 
 ---
 

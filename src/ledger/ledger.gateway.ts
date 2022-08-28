@@ -49,6 +49,7 @@ export class LedgerGateway implements OnGatewayInit {
     this.wss.emit('server:updateState', {
       balances: this.balances,
       tickers: this.exchange.allTickers,
+      candle: this.exchange.candleData,
     });
   }
 
@@ -73,5 +74,14 @@ export class LedgerGateway implements OnGatewayInit {
   logState() {
     this.logger.log(this.balances);
     this.logger.log(this.exchange.allTickers);
+  }
+
+  @Cron('3 * * * * *')
+  async getOrderBooks() {
+    this.logger.log('Refreshing order books');
+    const data = await this.exchange.getOrderBooks();
+    this.wss.emit('server:refreshOrderBooks', {
+      orderBooks: data,
+    });
   }
 }

@@ -6,9 +6,11 @@ import { Conf } from './conf';
 import { Exchange } from './exchange/exchange';
 import { XRPLedgerExplorer } from './explorers/xrp-explorer';
 import { ScheduleModule } from '@nestjs/schedule';
+import { HttpModule } from '@nestjs/axios';
 
 @Module({
   imports: [
+    HttpModule,
     ScheduleModule.forRoot(),
     // ServeStaticModule.forRoot({
     //   rootPath: join(__dirname, '..', 'client'),

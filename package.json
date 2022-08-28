@@ -22,6 +22,7 @@
   },
   "dependencies": {
     "@hashgraph/sdk": "^2.18.0",
+    "@nestjs/axios": "^0.1.0",
     "@nestjs/common": "^8.0.0",
     "@nestjs/core": "^8.0.0",
     "@nestjs/platform-express": "^8.0.0",
@@ -30,12 +31,15 @@
     "@nestjs/serve-static": "^3.0.0",
     "@nestjs/websockets": "^9.0.11",
     "@socket.io/redis-adapter": "^7.2.0",
+    "@types/ws": "^8.5.3",
+    "ccxt": "^1.92.83",
     "ccxws": "^0.47.0",
     "redis": "^4.3.0",
     "reflect-metadata": "^0.1.13",
     "rimraf": "^3.0.2",
     "rxjs": "^7.2.0",
     "socket.io": "^4.5.1",
+    "ws": "^8.8.1",
     "xrpl": "^2.3.1"
   },
   "devDependencies": {
