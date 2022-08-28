@@ -1,0 +1,19 @@
+{
+    "xrpWallets": [
+        {
+            "name": "XRP Vault",
+            "address": "ZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZ"
+        },
+        {
+            "name": "XRP Vault (2)",
+            "address": "ZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZ"
+        }
+    ],
+    "hbarWallets": [
+        {
+            "name": "ETH Killer",
+            "address": "0.0.000001"
+        }
+    ],
+    "xrp": "ZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZ"
+}

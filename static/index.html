@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Ledger</title>
+    <link rel="stylesheet" href="/styles.css" />
+    <link
+      href="https://unpkg.com/vue-simple-notify/dist/vue-simple-notify.min.css"
+      rel="stylesheet"
+    />
+    <script src="https://cdn.jsdelivr.net/npm/vue@2.7.10/dist/vue.js"></script>
+    <script src="https://unpkg.com/vue-simple-notify/dist/vue-simple-notify.min.js"></script>
+    <script src="https://unpkg.com/currency.js@~2.0.0/dist/currency.min.js"></script>
+    <script src="/socket.io/socket.io.js"></script>
+  </head>
+
+  <body>
+    <div id="v-app">
+      <section class="alerts">
+        <alerts-component :items="alerts"></alerts-component>
+      </section>
+      <section class="balance-list">
+        <h1>{{ title }}</h1>
+        <div class="balances">
+          <ul>
+            <li v-for="c of iterableBalances">
+              <strong>{{ c.currency }}:</strong> {{ c.balance }}
+            </li>
+          </ul>
+        </div>
+        <div class="total">
+          Total:
+          <span style="color: green">{{balanceWorth}} USDT</span>
+        </div>
+      </section>
+    </div>
+    <script>
+      Vue.component('alerts-component', VueSimpleNotify.VueSimpleNotify);
+      var app = new Vue({
+        el: '#v-app',
+        data: {
+          username: '',
+          title: 'Websockets Tester',
+          text: '',
+          socket: {
+            ledger: null,
+          },
+          alerts: [],
+          state: {
+            balances: {},
+            tickers: {},
+          },
+        },
+        methods: {
+          checkState() {
+            this.socket.ledger.emit('client:checkState');
+          },
+          updateState(state) {
+            console.log(state);
+            this.state = state;
+          },
+          sendBalances(state) {
+            console.log(state);
+          },
+          refreshPrices(data) {
+            console.log(data);
+            this.tickers = data.tickers;
+          },
+          refreshBalances(data) {
+            console.log(data);
+          },
+        },
+        computed: {
+          balanceWorth() {
+            let total = 0;
+            for (const b of this.iterableBalances) {
+              const ticker = this.state.tickers[b.currency];
+              if (!ticker) continue;
+              total = currency(total).add(b.balance).multiply(ticker.price);
+            }
+            return total;
+          },
+          iterableBalances() {
+            const keys = Object.keys(this.state.balances);
+            const balances = this.state.balances;
+            return keys.map((k) => ({ currency: k, balance: balances[k] }));
+          },
+        },
+        created() {
+          this.socket.ledger = io('http://127.0.0.1:3000/ledger', {});
+          this.socket.ledger.on('server:updateState', this.updateState);
+          this.socket.ledger.on('server:refreshPrices', this.refreshPrices);
+          this.socket.ledger.on('server:refreshBalances', this.refreshBalances);
+          this.socket.ledger.on('connect', () => {
+            console.log('connect');
+            this.checkState();
+          });
+        },
+      });
+    </script>
+  </body>
+</html>
