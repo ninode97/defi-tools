@@ -9,16 +9,33 @@ class CandleHandler {
   }
 
   createChart() {
-    return LightweightCharts.createChart(
-      document.body.querySelector('.terminal'),
-      {
-        width: 600,
-        height: 300,
-        crosshair: {
-          mode: LightweightCharts.CrosshairMode.Normal,
+    var terminal = document.querySelector('.terminal');
+    return LightweightCharts.createChart(terminal, {
+      width: terminal.scrollWidth,
+      height: 768,
+      crosshair: {
+        mode: LightweightCharts.CrosshairMode.Normal,
+      },
+      // priceScale: {
+      //   scaleMargins: {
+      //     top: 0.3,
+      //     bottom: 0.25,
+      //   },
+      //   borderVisible: false,
+      // },
+      layout: {
+        backgroundColor: '#131722',
+        textColor: '#d1d4dc',
+      },
+      grid: {
+        vertLines: {
+          color: 'rgba(42, 46, 57, 0)',
+        },
+        horzLines: {
+          color: 'rgba(42, 46, 57, 0.6)',
         },
       },
-    );
+    });
   }
 
   init(data) {
@@ -33,43 +50,46 @@ class CandleHandler {
         minMove: 0.0001,
       },
     });
+    this.priceLines = [];
   }
 
   applyOptions(opts) {
     this.chart && this.chart.applyOptions(opts);
   }
 
-  updatePressureLevels() {
-    var lineWidth = 1;
-    var minPriceLine = {
-      price: 0.25,
-      color: '#be1238',
-      lineWidth: lineWidth,
-      lineStyle: LightweightCharts.LineStyle.Solid,
-      axisLabelVisible: true,
-      title: 'minimum price',
-    };
-    // var avgPriceLine = {
-    //   price: avgPrice,
-    //   color: '#be1238',
-    //   lineWidth: lineWidth,
-    //   lineStyle: LightweightCharts.LineStyle.Solid,
-    //   axisLabelVisible: true,
-    //   title: 'average price',
-    // };
-    // var maxPriceLine = {
-    //   price: maximumPrice,
-    //   color: '#be1238',
-    //   lineWidth: lineWidth,
-    //   lineStyle: LightweightCharts.LineStyle.Solid,
-    //   axisLabelVisible: true,
-    //   title: 'maximum price',
-    // };
+  updateOrderBooks(newOrderBooks) {
+    const asks = newOrderBooks.asks;
+    const bids = newOrderBooks.bids;
+    var lineWidth = 0.1;
 
-    this.candleSeries.createPriceLine(minPriceLine);
-    // this.candleSeries.createPriceLine(avgPriceLine);
-    // this.candleSeries.createPriceLine(maxPriceLine);
+    this.priceLines.forEach((p) => this.candleSeries.removePriceLine(p));
+    this.priceLines = [];
 
+    Object.keys(asks).forEach((ask) => {
+      var minPriceLine = {
+        price: ask,
+        color: 'rgb(20, 214, 20)',
+        lineWidth: lineWidth,
+        lineStyle: LightweightCharts.LineStyle.Solid,
+        axisLabelVisible: true,
+        title: parseInt(asks[ask] * ask),
+      };
+      const priceLine = this.candleSeries.createPriceLine(minPriceLine);
+      this.priceLines.push(priceLine);
+    });
+
+    Object.keys(bids).forEach((bid) => {
+      var minPriceLine = {
+        price: bid,
+        color: '#be1238',
+        lineWidth: lineWidth,
+        lineStyle: LightweightCharts.LineStyle.Solid,
+        axisLabelVisible: true,
+        title: parseInt(bids[bid] * bid),
+      };
+      const priceLine = this.candleSeries.createPriceLine(minPriceLine);
+      this.priceLines.push(priceLine);
+    });
     this.chart.timeScale().fitContent();
   }
 }

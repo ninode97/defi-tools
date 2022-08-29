@@ -80,6 +80,7 @@ export class LedgerGateway implements OnGatewayInit {
   async getOrderBooks() {
     this.logger.log('Refreshing order books');
     const data = await this.exchange.getOrderBooks();
+    console.log(data);
     this.wss.emit('server:refreshOrderBooks', {
       orderBooks: data,
     });

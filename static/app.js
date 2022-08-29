@@ -12,9 +12,9 @@ var app = new Vue({
     state: {
       balances: {},
       tickers: {},
-      orderBooks: {},
       candle: [],
     },
+    orderBooks: {},
   },
   methods: {
     checkState() {
@@ -36,7 +36,7 @@ var app = new Vue({
     },
     refreshOrderBooks(data) {
       console.log(data);
-      this.state.orderBooks = data.orderBooks;
+      this.orderBooks = data.orderBooks;
     },
   },
   computed: {
@@ -66,6 +66,12 @@ var app = new Vue({
       if (!orderBooks || !orderBooks.asks) return [];
       const asks = orderBooks.asks;
       return asks || [];
+    },
+  },
+  watch: {
+    // whenever question changes, this function will run
+    orderBooks(newOrderBooks) {
+      window.chart.updateOrderBooks(newOrderBooks);
     },
   },
   created() {

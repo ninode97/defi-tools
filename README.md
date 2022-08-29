@@ -20,6 +20,7 @@ Within this repository, I am practicing my skills as well building the tools / s
 
 - Computing of holding worth in USDT
 - Chart display for XRP/USDT ticker
+- Buy / Sell orders display within chart
 
 ---
 

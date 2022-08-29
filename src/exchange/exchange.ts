@@ -42,6 +42,27 @@ export class Exchange {
     this.getCandleStickData();
   }
 
+  private diff = {
+    bids: {},
+    asks: {},
+    capture(key, price, reduced) {
+      const data = this[key];
+      const target = data[price] || [];
+      target.push(reduced);
+      data[price] = target;
+    },
+    get() {
+      return JSON.stringify(
+        {
+          bids: this.bids,
+          asks: this.asks,
+        },
+        null,
+        4,
+      );
+    },
+  };
+
   get candleData() {
     return this.candle;
   }
@@ -93,11 +114,56 @@ export class Exchange {
   }
 
   async getOrderBooks() {
+    this.logger.log('getting order book');
     const data = await this.binanceExchange.fetchOrderBook(
       'XRP/USDT',
       this.ORDER_BOOK_LIMIT,
     );
-    return data;
+    const projection = {
+      asks: {},
+      bids: {},
+    };
+
+    data.bids.forEach((bid) => {
+      const realPrice = bid[0];
+      const amount = parseInt(`${bid[1]}`);
+      const volume = realPrice * amount;
+      const priceTarget = Math.round((bid[0] + Number.EPSILON) * 100) / 100;
+      if (volume < 1000 * 5) {
+        return;
+      } else if (!priceTarget) {
+        projection.bids[realPrice] = projection.bids[realPrice] || 0;
+        projection.bids[realPrice] += amount;
+      } else if (volume > 1000 * 1000) {
+        projection.bids[realPrice] = projection.bids[realPrice] || 0;
+        projection.bids[realPrice] += amount;
+      } else if (volume > 1000 * 20) {
+        projection.bids[priceTarget] = projection.bids[priceTarget] || 0;
+        projection.bids[priceTarget] += amount;
+      }
+    });
+    data.asks.forEach((ask) => {
+      const realPrice = ask[0];
+      const amount = parseInt(`${ask[1]}`);
+      const volume = realPrice * amount;
+      const priceTarget = Math.round((ask[0] + Number.EPSILON) * 100) / 100;
+
+      if (volume < 1000 * 5) {
+        return;
+      } else if (!priceTarget) {
+        projection.asks[realPrice] = projection.asks[realPrice] || 0;
+        projection.asks[realPrice] += amount;
+      } else if (volume > 1000 * 1000) {
+        projection.asks[realPrice] = projection.asks[realPrice] || 0;
+        projection.asks[realPrice] += amount;
+      } else if (volume > 1000 * 20) {
+        projection.asks[priceTarget] = projection.asks[priceTarget] || 0;
+        projection.asks[priceTarget] += amount;
+      }
+    });
+    //writeFileSync('./test.json', this.diff.get());
+
+    return projection;
   }
 
   async confugreXRPTickerSocket() {
@@ -119,7 +185,6 @@ export class Exchange {
   }
 
   async getCandleStickData() {
-    console.log('fetching xrp candle');
     let candle = [];
     const endpoint = `https://api.binance.com/api/v3/uiKlines?symbol=XRPUSDT&interval=1w`;
     let startTime = 1;
@@ -138,7 +203,6 @@ export class Exchange {
       await sleep(250);
     }
     const d = this.transformCandleStickIntoFriendlyFormat(candle);
-    console.log(d);
     this.candle = d;
   }
 
@@ -179,7 +243,6 @@ export class Exchange {
       };
       Object.assign(d, entry);
     });
-    const DATE = Date as any;
     return Object.values(d);
   }
 }
