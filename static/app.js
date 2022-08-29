@@ -15,6 +15,7 @@ var app = new Vue({
       candle: [],
     },
     orderBooks: {},
+    pricesZones: false,
   },
   methods: {
     checkState() {
@@ -38,6 +39,14 @@ var app = new Vue({
       console.log(data);
       this.orderBooks = data.orderBooks;
     },
+    toggleZones() {
+      if (this.pricesZones) {
+        window.chart.showOrderBooks(this.orderBooks);
+      } else {
+        window.chart.hideOrderBooks();
+      }
+      this.pricesZones = !this.pricesZones;
+    },
   },
   computed: {
     balanceWorth() {
@@ -55,24 +64,21 @@ var app = new Vue({
       return keys.map((k) => ({ currency: k, balance: balances[k] }));
     },
     bids() {
-      const orderBooks = this.state.orderBooks;
-      if (!orderBooks || !orderBooks.bids) return [];
-      const bids = orderBooks.bids;
-
-      return bids || [];
+      const orderBooks = this.orderBooks || {};
+      const bids = orderBooks.bids || {};
+      return Object.keys(bids).length;
     },
     asks() {
-      const orderBooks = this.state.orderBooks;
-      if (!orderBooks || !orderBooks.asks) return [];
-      const asks = orderBooks.asks;
-      return asks || [];
+      const orderBooks = this.orderBooks || {};
+      const asks = orderBooks.asks || {};
+      return Object.keys(asks).length;
     },
   },
   watch: {
     // whenever question changes, this function will run
-    orderBooks(newOrderBooks) {
-      window.chart.updateOrderBooks(newOrderBooks);
-    },
+    // orderBooks(newOrderBooks) {
+    //   window.chart.updateOrderBooks(newOrderBooks);
+    // },
   },
   created() {
     this.socket.ledger = io('http://127.0.0.1:3000/ledger', {});

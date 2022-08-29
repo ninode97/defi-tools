@@ -57,18 +57,17 @@ class CandleHandler {
     this.chart && this.chart.applyOptions(opts);
   }
 
-  updateOrderBooks(newOrderBooks) {
+  showOrderBooks(newOrderBooks) {
     const asks = newOrderBooks.asks;
     const bids = newOrderBooks.bids;
     var lineWidth = 0.1;
 
-    this.priceLines.forEach((p) => this.candleSeries.removePriceLine(p));
-    this.priceLines = [];
+    this.hideOrderBooks();
 
     Object.keys(asks).forEach((ask) => {
       var minPriceLine = {
         price: ask,
-        color: 'rgb(20, 214, 20)',
+        color: '#be1238',
         lineWidth: lineWidth,
         lineStyle: LightweightCharts.LineStyle.Solid,
         axisLabelVisible: true,
@@ -81,7 +80,7 @@ class CandleHandler {
     Object.keys(bids).forEach((bid) => {
       var minPriceLine = {
         price: bid,
-        color: '#be1238',
+        color: 'rgb(20, 214, 20)',
         lineWidth: lineWidth,
         lineStyle: LightweightCharts.LineStyle.Solid,
         axisLabelVisible: true,
@@ -90,7 +89,13 @@ class CandleHandler {
       const priceLine = this.candleSeries.createPriceLine(minPriceLine);
       this.priceLines.push(priceLine);
     });
-    this.chart.timeScale().fitContent();
+    this.chart.timeScale();
+    //.fitContent();
+  }
+
+  hideOrderBooks() {
+    this.priceLines.forEach((p) => this.candleSeries.removePriceLine(p));
+    this.priceLines = [];
   }
 }
 
