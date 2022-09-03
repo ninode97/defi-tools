@@ -36,7 +36,13 @@ export class FearAndGreedService {
     const res = await this.httpService.axiosRef.get<FearAndGreedIndexResponse>(
       'https://api.alternative.me/fng/?limit=0',
     );
-    return (res.data && res.data.data) || [];
+    return this.sortByTimestamp((res.data && res.data.data) || []);
+  }
+
+  sortByTimestamp(data: FearAndGreedIndexEntry[]) {
+    return data.sort(
+      (a, b) => Number(a.timestamp) * 1000 - Number(b.timestamp) * 1000,
+    );
   }
 
   @Interval(MS_TIME.HOUR)
