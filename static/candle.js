@@ -8,6 +8,20 @@ class CandleHandler {
     this.reset();
   }
 
+  dateToChartTimeMinute(date) {
+    return (
+      Date.UTC(
+        date.getFullYear(),
+        date.getMonth(),
+        date.getDate(),
+        date.getHours(),
+        date.getMinutes(),
+        0,
+        0,
+      ) / 1000
+    );
+  }
+
   createChart() {
     var terminal = document.querySelector('.terminal');
     return LightweightCharts.createChart(terminal, {
@@ -40,6 +54,8 @@ class CandleHandler {
 
   init(data) {
     this.data = data;
+    this.candleData = [];
+
     this.chart = this.createChart();
     this.candleSeries = this.chart.addCandlestickSeries();
     this.candleSeries.setData(this.data);
@@ -66,7 +82,7 @@ class CandleHandler {
 
     Object.keys(asks).forEach((ask) => {
       var minPriceLine = {
-        price: ask,
+        price: Number(ask),
         color: '#be1238',
         lineWidth: lineWidth,
         lineStyle: LightweightCharts.LineStyle.Solid,
@@ -79,7 +95,7 @@ class CandleHandler {
 
     Object.keys(bids).forEach((bid) => {
       var minPriceLine = {
-        price: bid,
+        price: Number(bid),
         color: 'rgb(20, 214, 20)',
         lineWidth: lineWidth,
         lineStyle: LightweightCharts.LineStyle.Solid,
@@ -96,6 +112,26 @@ class CandleHandler {
   hideOrderBooks() {
     this.priceLines.forEach((p) => this.candleSeries.removePriceLine(p));
     this.priceLines = [];
+  }
+
+  updateChartCandles(data) {
+    if (!data || !data.candle) return;
+    // const processed = [];
+    // data = data.candle.filter((d) => {
+    //   const entry = Object.values(d)[0];
+    //   if (!processed.includes(entry.time)) {
+    //     processed.push(entry.time);
+    //     return true;
+    //   }
+    //   return false;
+    // });
+    // var sorted = [...this.data, ...data].sort((a, b) =>
+    //   new Date(a.time) < new Date(b.time) ? -1 : 1,
+    // );
+    console.log(sorted);
+    this.data = data;
+    this.candleSeries.setData(this.data);
+    this.chart.timeScale();
   }
 }
 

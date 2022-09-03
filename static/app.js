@@ -47,6 +47,10 @@ var app = new Vue({
       }
       this.pricesZones = !this.pricesZones;
     },
+    updateCandle(data) {
+      const chart = window.chart;
+      chart && chart.updateChartCandles(data);
+    },
   },
   computed: {
     balanceWorth() {
@@ -86,6 +90,7 @@ var app = new Vue({
     this.socket.ledger.on('server:refreshPrices', this.refreshPrices);
     this.socket.ledger.on('server:refreshBalances', this.refreshBalances);
     this.socket.ledger.on('server:refreshOrderBooks', this.refreshOrderBooks);
+    this.socket.ledger.on('server:updateCandle', this.updateCandle);
     this.socket.ledger.on('connect', () => {
       console.log('connect');
       this.checkState();

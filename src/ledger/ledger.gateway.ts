@@ -85,4 +85,13 @@ export class LedgerGateway implements OnGatewayInit {
       orderBooks: data,
     });
   }
+
+  // @Cron('* * * * * *')
+  // updateCandle() {
+  //   this.logger.log('Updating candle....');
+  //   const data = this.exchange.stack.drain();
+  //   this.wss.emit('server:updateCandle', {
+  //     candle: data,
+  //   });
+  // }
 }
