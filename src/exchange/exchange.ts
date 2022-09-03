@@ -215,7 +215,7 @@ export class Exchange {
     const endpoint = `https://api.binance.com/api/v3/uiKlines?symbol=XRPUSDT&interval=1w`;
     let startTime = 1;
     while (true) {
-      this.logger.log('Fetching XRP candle - Time' + startTime);
+      this.logger.log('Fetching XRP candle - Time ' + startTime);
       const target = endpoint + `&startTime=` + startTime;
       const res = await this.httpService.axiosRef.get(target);
       const data = res.data;

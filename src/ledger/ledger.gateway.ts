@@ -72,8 +72,8 @@ export class LedgerGateway implements OnGatewayInit {
 
   @Cron('5 * * * * *')
   logState() {
-    this.logger.log(this.balances);
-    this.logger.log(this.exchange.allTickers);
+    // this.logger.log(this.balances);
+    // this.logger.log(this.exchange.allTickers);
   }
 
   @Cron('3 * * * * *')
