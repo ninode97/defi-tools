@@ -1,27 +1,21 @@
 # Use postgres/example user/password credentials
-version: "3.1"
+version: '3.1'
 
 services:
   redis:
     image: redis:latest
     ports:
-      - "6379:6379"
+      - '6379:6379'
   rcli:
     image: redis:latest
     links:
       - redis
     command: redis-cli -h redis
-  db:
-    image: postgres
+  mongo:
+    image: mongo:6.0.1-focal
     restart: always
     environment:
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: password
-      POSTGRES_HOST_AUTH_METHOD: trust
-    ports:
-      - 5432:5432
-  adminer:
-    image: adminer
-    restart: always
-    ports:
-      - 8080:8080
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: password
+    volumes:
+      - /home/sphere/coding/price-discovery-ws/data:/data/db

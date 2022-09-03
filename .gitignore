@@ -37,3 +37,6 @@ lerna-debug.log*
 
 # Misc
 /conf.json
+
+/data
+data
