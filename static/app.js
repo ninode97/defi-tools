@@ -13,6 +13,10 @@ var app = new Vue({
       balances: {},
       tickers: {},
       candle: [],
+      greed: {
+        label: 'Loading',
+        value: '0',
+      },
     },
     orderBooks: {},
     pricesZones: false,

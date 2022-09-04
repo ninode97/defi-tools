@@ -11,3 +11,13 @@
   display: flex;
   justify-content: center;
 }
+
+.fear-greed {
+  border: 1px solid gainsboro;
+  padding: 1rem;
+  background-color: rgba(235, 227, 227, 0.74);
+  width: 200px;
+  margin: 0.5rem 0;
+  display: flex;
+  justify-content: space-between;
+}

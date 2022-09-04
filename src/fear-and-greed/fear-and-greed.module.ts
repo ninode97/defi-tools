@@ -18,5 +18,6 @@ import {
       },
     ]),
   ],
+  exports: [FearAndGreedService],
 })
 export class FearAndGreedModule {}

@@ -9,6 +9,7 @@ import { ScheduleModule } from '@nestjs/schedule';
 import { HttpModule } from '@nestjs/axios';
 import { MongooseModule } from '@nestjs/mongoose';
 import { FearAndGreedModule } from './fear-and-greed/fear-and-greed.module';
+import { FearAndGreedService } from './fear-and-greed/fear-and-greed.service';
 
 @Module({
   imports: [

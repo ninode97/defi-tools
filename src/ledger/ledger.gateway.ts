@@ -10,6 +10,7 @@ import { Server } from 'socket.io';
 import { Conf, WalletAddress } from 'src/conf';
 import { Exchange, WATCHED_CURRENCIES } from 'src/exchange/exchange';
 import { XRPLedgerExplorer } from 'src/explorers/xrp-explorer';
+import { FearAndGreedService } from 'src/fear-and-greed/fear-and-greed.service';
 
 type CurrencyBalance = {
   [currency: string]: number;
@@ -24,7 +25,13 @@ export class LedgerGateway implements OnGatewayInit {
     private readonly conf: Conf,
     private readonly xrpLedgerExplorer: XRPLedgerExplorer,
     private readonly exchange: Exchange,
+    private readonly fearGreedService: FearAndGreedService,
   ) {}
+
+  private fearGreed = {
+    label: 'loading',
+    value: '0',
+  };
 
   get balances(): CurrencyBalance {
     let allXrp = 0;
@@ -40,8 +47,13 @@ export class LedgerGateway implements OnGatewayInit {
   @WebSocketServer() wss: Server;
   private logger: Logger = new Logger('LedgerGateway');
 
-  afterInit(server: any) {
+  async afterInit(server: any) {
     this.logger.log('Initialized');
+    const data = await this.fearGreedService.getLastEntry();
+    this.fearGreed = {
+      label: data.value_classification,
+      value: data.value,
+    };
   }
 
   @SubscribeMessage('client:checkState')
@@ -50,6 +62,7 @@ export class LedgerGateway implements OnGatewayInit {
       balances: this.balances,
       tickers: this.exchange.allTickers,
       candle: this.exchange.candleData,
+      greed: this.fearGreed,
     });
   }
 
